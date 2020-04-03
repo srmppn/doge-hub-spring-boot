@@ -7,6 +7,10 @@ import com.example.demo.entities.Account;
 import com.example.demo.repositories.AccountRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,11 +24,11 @@ public class AccountService {
     public Optional<Account> getAccountById(Long id){
         return this.repository.findById(id);
     }
-
+    
     public Optional<Account> getAccountByName(String name){
         return this.repository.findByUserName(name);
     }
-
+    
     public Account saveAccount(Account account){
         return this.repository.save(account);
     }
