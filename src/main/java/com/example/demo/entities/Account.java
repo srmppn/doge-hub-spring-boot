@@ -8,6 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity
 @Table(name = "Account")
@@ -41,9 +45,11 @@ public class Account {
     public void setUserName(String userName){
         this.userName = userName;
     }
+    @JsonIgnore
     public String getPassword(){
         return this.passWord;
     }
+    @JsonDeserialize
     public void setPassword(String password){
         this.passWord = password;
     }

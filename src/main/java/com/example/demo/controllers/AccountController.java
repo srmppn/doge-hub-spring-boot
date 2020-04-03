@@ -10,6 +10,7 @@ import com.example.demo.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,11 @@ public class AccountController {
         if(account.isPresent()){
             return new ResponseEntity<>(account.get(),HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PreAuthorize("#account.getUserName() == authentication.principal.username or hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/accounts/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> putAccount(){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
