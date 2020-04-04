@@ -1,15 +1,13 @@
 package com.example.demo.controllers;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collection;
 
 import javax.validation.Valid;
 
 import com.example.demo.entities.Account;
-import com.example.demo.entities.AccountPrincipal;
 import com.example.demo.services.AccountDetailsService;
-import com.example.demo.services.AuthenticationService;
+import com.example.demo.services.SignUpAccountService;
+import com.example.demo.services.exception.UsernameInflictException;
 import com.example.demo.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,10 +30,12 @@ public class AuthenticationController {
     @Autowired
     private AccountDetailsService accountDetailsService;
     @Autowired
+    private SignUpAccountService signUpAccountService;
+    @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
 	private JwtUtil jwtTokenUtil;
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public ResponseEntity<?> getAuthenticate(@RequestHeader("Authorization") String authorization) throws Exception{
         String encodedCredentials = authorization.substring(6);
         byte[] decodedCredentialByte = Base64.getDecoder().decode(encodedCredentials);
@@ -58,5 +54,16 @@ public class AuthenticationController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, jwt);
 		return new ResponseEntity<>(headers ,HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public ResponseEntity<?> SignUpNewAccount(@RequestBody @Valid Account account){
+        try{
+            this.signUpAccountService.SignUpAccount(account);
+        }
+        catch(UsernameInflictException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
