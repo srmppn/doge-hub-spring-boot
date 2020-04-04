@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,7 +20,9 @@ public class Account {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long accountId;
+    @NotBlank(message = "The username is mandatory")
     private String userName;
+    @NotBlank(message = "Need to specify password")
     private String passWord;
     private Long nuggerPoint;
     @OneToMany(mappedBy = "account")
