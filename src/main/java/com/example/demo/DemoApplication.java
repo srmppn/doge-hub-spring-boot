@@ -23,7 +23,7 @@ public class DemoApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedMethods("*")
-						.allowedHeaders("Authorization")
+						.allowedHeaders("Content-Type","Authorization")
 						.exposedHeaders("Authorization");
 			}
 		};
