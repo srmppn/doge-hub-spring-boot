@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,14 @@ public class AccountController {
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public ResponseEntity<?> getAllAccounts(){
         return new ResponseEntity<>(this.accountService.getAllAccount(), HttpStatus.OK);
+    }
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ResponseEntity<?> getProfile(Authentication authentication){
+        Optional<Account> account = this.accountService.getAccountByName(authentication.getName());
+        if(account.isPresent()){
+            return new ResponseEntity<>(account.get(),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> getAccountByName(@PathVariable("username") String username){
