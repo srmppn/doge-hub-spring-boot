@@ -31,7 +31,11 @@ public class AccountController {
         return new ResponseEntity<>(this.accountService.getAllAccount(), HttpStatus.OK);
     }
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
+<<<<<<< HEAD
     public ResponseEntity<?> getProfile(Authentication authentication){
+=======
+    public ResponseEntity<?> getAccountByName(Authentication authentication){
+>>>>>>> feature/storage-service
         Optional<Account> account = this.accountService.getAccountByName(authentication.getName());
         if(account.isPresent()){
             return new ResponseEntity<>(account.get(),HttpStatus.OK);
