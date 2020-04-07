@@ -23,14 +23,9 @@ public class TransactionController {
     AccountService accountService;
     @Autowired
     TransactionService transactionService;
-
-    public TransactionController(){
-
-    }
     
     @RequestMapping(value = "/transactions", method = RequestMethod.POST)
     public ResponseEntity<?> sendNuggerPoint(@RequestBody Transaction transaction){
-        System.out.println("FUCKING DID IT ALREADY");
         Optional<Account> sender = accountService.getAccountById(transaction.getSenderId());
         Optional<Account> receiver = accountService.getAccountById(transaction.getReceiverId());
         if(sender.isPresent()&&receiver.isPresent()){

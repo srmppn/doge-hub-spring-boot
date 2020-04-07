@@ -23,25 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
     @Autowired
     private AccountService accountService;
-    public AccountController(){
-
-    }
+    
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public ResponseEntity<?> getAllAccounts(){
         return new ResponseEntity<>(this.accountService.getAllAccount(), HttpStatus.OK);
     }
+
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-<<<<<<< HEAD
     public ResponseEntity<?> getProfile(Authentication authentication){
-=======
-    public ResponseEntity<?> getAccountByName(Authentication authentication){
->>>>>>> feature/storage-service
         Optional<Account> account = this.accountService.getAccountByName(authentication.getName());
         if(account.isPresent()){
             return new ResponseEntity<>(account.get(),HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> getAccountByName(@PathVariable("username") String username){
         Optional<Account> account = this.accountService.getAccountByName(username);
@@ -50,9 +46,15 @@ public class AccountController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    
     @PreAuthorize("#account.getUserName() == authentication.principal.username or hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/accounts/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> putAccount(){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> putAccount(Account account){
+        Optional<Account> targetAccount = this.accountService.getAccountById(account.getAccountId());
+        if(targetAccount.isPresent()){
+            this.accountService.saveAccount(targetAccount.get());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -24,17 +25,19 @@ public class Account {
     private String userName;
     @NotBlank(message = "Need to specify password")
     private String passWord;
+    private String profileImage;
     private Long nuggerPoint;
     @OneToMany(mappedBy = "account")
     private List<Video> videos;
-    
+
     public Account(){
 
     }
-    public Account(String username, String password, Long nuggerpoint){
+    public Account(String username, String password, Long nuggerpoint, String profile){
         this.userName = username;
         this.passWord = password;
-        this.nuggerPoint = nuggerPoint;
+        this.nuggerPoint = nuggerpoint;
+        this.profileImage = profile;
     }
     public Long getAccountId(){
         return accountId;
@@ -67,5 +70,11 @@ public class Account {
     }
     public void setVideos(List<Video> videos) {
         this.videos = videos;
+    }
+    public String getProfileImage() {
+        return this.profileImage;
+    }
+    public void setProfileImage(String profileImagePath) {
+        this.profileImage = profileImagePath;
     }
 }
