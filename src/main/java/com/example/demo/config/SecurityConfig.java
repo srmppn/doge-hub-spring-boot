@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import java.nio.file.Path;
+
 import com.example.demo.entities.Account;
 import com.example.demo.filters.JwtRequestFilter;
 import com.example.demo.services.AccountDetailsService;
@@ -33,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		this.accountService.saveAccount(new Account("pink", passwordEncoder().encode("1234"), 10L));
-		this.accountService.saveAccount(new Account("guy", passwordEncoder().encode("1234"), 10L));
+		this.accountService.saveAccount(new Account("pink", passwordEncoder().encode("1234"), 10L, "big_boye.jpg"));
+		this.accountService.saveAccount(new Account("guy", passwordEncoder().encode("1234"), 10L, null));
 		auth.userDetailsService(accountDetailsService);
 	}
 
@@ -54,8 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.cors();
 		httpSecurity.csrf().disable()
 				.authorizeRequests()
-						.antMatchers("/api/v1/signin").permitAll()
 						.antMatchers("/api/v1/file").permitAll()
+						.antMatchers("/api/v1/images/*").permitAll()
+						.antMatchers("/api/v1/signin").permitAll()
 						.antMatchers("/api/v1/signup").permitAll()
 						.anyRequest().authenticated().and().
 						exceptionHandling().and().sessionManagement()
