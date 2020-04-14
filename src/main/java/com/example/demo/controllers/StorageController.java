@@ -2,11 +2,14 @@ package com.example.demo.controllers;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.example.demo.entities.Account;
 import com.example.demo.entities.FileResponse;
+import com.example.demo.services.AccountService;
 import com.example.demo.services.StorageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,15 +33,24 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class StorageController {
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private AccountService accountService;
     
     @RequestMapping(value = "/file", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadFile(@RequestParam("imageType") String imageType, @RequestParam("file") MultipartFile file) {
-        String fileName = storageService.storeFile(file);
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                                                            .path("/images/")
-                                                            .path(fileName)
-                                                            .toUriString();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> uploadFile(Authentication authentication, @RequestParam("file") MultipartFile file) {
+        Optional<Account> targetAccount = accountService.getAccountByName(authentication.getName());
+        if(targetAccount.isPresent()){
+            String fileName = storageService.storeFile(file);
+            // String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            //                                                     .path("/images/")
+            //                                                     .path(fileName)
+            //                                                     .toUriString();
+            targetAccount.get().setProfileImage(fileName);
+            accountService.saveAccount(targetAccount.get());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     
     @RequestMapping(value = "/images/{fileName:.+}", method = RequestMethod.GET)
